@@ -1,0 +1,26 @@
+---
+
+- name: installing Java Virtual ENV
+  git:
+    repo: https://github.com/jenv/jenv.git
+    dest: /usr/src/jenv
+
+- name: update bash_profile in skel dir
+  blockinfile:
+    path: /etc/defaults/etc/skel/.bash_profile
+    block: |
+      # load Java Virtual Env if possible
+      if [[ -d /usr/src/jenv/bin ]]; then
+        export PATH="/usr/src/jenv/bin:$PATH"
+        eval "$(jenv init -)"
+      fi
+    insertafter: EOF
+    create: yes
+
+- name: install (Oracle) Java 8
+  block:
+    apt:
+      name: oracle-java8-jdk
+      state: present
+      update: yes
+    when: ansible_os_family == 'Debian'
