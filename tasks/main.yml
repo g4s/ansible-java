@@ -4,6 +4,7 @@
   git:
     repo: https://github.com/jenv/jenv.git
     dest: /usr/src/jenv
+  become: true
 
 - name: update bash_profile in skel dir
   blockinfile:
@@ -16,6 +17,7 @@
       fi
     insertafter: EOF
     create: yes
+  become: true
 
 - name: install (Oracle) Java 8
   block:
@@ -24,3 +26,12 @@
       state: present
       update: yes
     when: ansible_os_family == 'Debian'
+  become: true
+
+- name: install Java
+  block:
+    - homebrew_cask:
+        name: java
+        state: present
+        update_homebrew: yes
+      when: ansible_os_family == 'Darwin'
